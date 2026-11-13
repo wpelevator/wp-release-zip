@@ -2,7 +2,7 @@
 
 [![GitHub Marketplace](https://img.shields.io/badge/Marketplace-WP%20Release%20Zip-blue?logo=github)](https://github.com/marketplace/actions/wp-release-zip) [![Latest release](https://img.shields.io/github/v/release/wpelevator/wp-release-zip?include_prereleases&sort=semver)](https://github.com/wpelevator/wp-release-zip/releases) [![npm](https://img.shields.io/npm/v/@wpelevator/wp-release?label=wp-release)](https://www.npmjs.com/package/@wpelevator/wp-release)
 
-GitHub Action that creates the release ZIP of a WordPress plugin or theme using [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release). It's named after the [`wp-release zip`](https://www.npmjs.com/package/@wpelevator/wp-release#zip) command that it runs.
+GitHub Action that creates the release ZIP of a WordPress plugin or theme using [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release). It's named after the [`wp-release zip`](https://wpelevator.github.io/docs/js/wp-release/latest/build-a-zip.html) command that it runs.
 
 The ZIP has a `{slug}/` root folder, which WordPress.org, plugin updates and WordPress Playground require, and leaves out everything that `.distignore` lists. The optional `exclude-gitattributes: true` input also honors Git `export-ignore` attributes, including nested `.gitattributes` files. It's reproducible: entries are sorted and use a fixed timestamp and file mode, so the same files and deterministic metadata give the same ZIP. Embedded minisign signatures include a signing timestamp, and custom codec callbacks control their own encoded bytes. It needs no `zip` or `rsync` and works on any runner.
 
@@ -80,7 +80,7 @@ For a GNU manifest, set `checksums-format: sha256sum`, `checksums-file: SHA256SU
 
 | Input | Default | Description |
 |---|---|---|
-| `package` | | Package of `wp-release.config.js`, by identifier or path under the configured root like `plugins/my-plugin`, to zip its directory with the [`files` config](https://www.npmjs.com/package/@wpelevator/wp-release#deploy-configured-packages) of its package group, the same files that its deploys ship. The slug defaults to the directory name, so the `slug` input is ignored, and `source-dir` and the file selection inputs can't be combined with it. |
+| `package` | | Package of `wp-release.config.js`, by identifier or path under the configured root like `plugins/my-plugin`, to zip its directory with the [`files` config](https://wpelevator.github.io/docs/js/wp-release/latest/deploy-packages.html) of its package group, the same files that its deploys ship. The slug defaults to the directory name, so the `slug` input is ignored, and `source-dir` and the file selection inputs can't be combined with it. |
 | `config` | conventional config in the repository root | JavaScript release config path for package selection and `integrity` settings, passed as `--config`. |
 | `source-dir` | `.` | Directory to archive. |
 | `slug` | repository name | Plugin or theme slug. |
@@ -129,11 +129,11 @@ npm install --save-dev @wpelevator/wp-release
 npx wp-release zip dist --sign --sign-checksums
 ```
 
-The inputs map to the flags of [`wp-release zip`](https://www.npmjs.com/package/@wpelevator/wp-release#zip): `source-dir` is the first argument, `package`, `config`, `filename-format`, `output`, `distignore`, `exclude`, `exclude-gitattributes`, `checksums`, `checksums-file`, `checksums-format`, `checksums-algorithms`, `sign`, `sign-checksums`, `sign-format` and `force` keep their names, `root-folder: false` is `--no-root-folder` and `distignore: false` is `--no-distignore`. `embed-checksums` and `sign-checksums` map explicit `false` to their `--no-` flags; omitting them preserves integrity configuration. Add `--json` to read the paths of the ZIP and the manifest from the output. The CLI needs Node.js 22.12 or later, and has no other dependencies on the runner. Run `npx wp-release zip --help` for all options.
+The inputs map to the flags of [`wp-release zip`](https://wpelevator.github.io/docs/js/wp-release/latest/build-a-zip.html): `source-dir` is the first argument, `package`, `config`, `filename-format`, `output`, `distignore`, `exclude`, `exclude-gitattributes`, `checksums`, `checksums-file`, `checksums-format`, `checksums-algorithms`, `sign`, `sign-checksums`, `sign-format` and `force` keep their names, `root-folder: false` is `--no-root-folder` and `distignore: false` is `--no-distignore`. `embed-checksums` and `sign-checksums` map explicit `false` to their `--no-` flags; omitting them preserves integrity configuration. Add `--json` to read the paths of the ZIP and the manifest from the output. The CLI needs Node.js 22.12 or later, and has no other dependencies on the runner. Run `npx wp-release zip --help` for all options.
 
 ## How it works
 
-[`src/run.ts`](src/run.ts) reads the inputs with [`@actions/core`](https://github.com/actions/toolkit/tree/main/packages/core), maps them to the arguments of the [`wp-release zip`](https://www.npmjs.com/package/@wpelevator/wp-release#zip) command and runs it through the `execute()` function of [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release), so the action and the CLI always behave the same. The action runs `dist/index.js`, a single file bundled with esbuild that includes `wp-release` and all other dependencies, so nothing is installed from npm when the action runs. The tooling version is fixed by the action ref you pin.
+[`src/run.ts`](src/run.ts) reads the inputs with [`@actions/core`](https://github.com/actions/toolkit/tree/main/packages/core), maps them to the arguments of the [`wp-release zip`](https://wpelevator.github.io/docs/js/wp-release/latest/build-a-zip.html) command and runs it through the `execute()` function of [`@wpelevator/wp-release`](https://www.npmjs.com/package/@wpelevator/wp-release), so the action and the CLI always behave the same. The action runs `dist/index.js`, a single file bundled with esbuild that includes `wp-release` and all other dependencies, so nothing is installed from npm when the action runs. The tooling version is fixed by the action ref you pin.
 
 ## Development
 
